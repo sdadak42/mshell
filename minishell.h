@@ -1,35 +1,53 @@
 #ifndef MINISHELL_H
-# define MINISHELL_H 
+# define MINISHELL_H
 
+# include "./Libft/libft.h"
+# include "./ft_printf/ft_printf.h" // GECICI - ft_printf
+# include <readline/history.h>
+# include <readline/readline.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <unistd.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-# include "./Libft/libft.h"
 
-typedef enum e_token_type
-{
+# define STDIN 0
+# define STDOUT 1
+# define STDERR 2
+
+
+
+typedef enum e_token_type {
 	WORD,
-    HEREDOC,
+	HEREDOC,
 	REDIR_IN,
 	REDIR_OUT,
 	APPEND,
 	PIPE,
-}t_token_type;
+} t_type;
 
-typedef struct s_token
-{
-	char	*value;
-	t_token_type	type;
+typedef struct s_token {
+	char			*value;
+	t_type			type;
+	int				is_squote; 		// tek tırnak mı?
+	int				is_join;   		// kendinden sonraki ile birleşik mi olacak?
 	struct s_token	*next;
-}t_token;
+} t_token;
 
-typedef struct s_mdata
-{
-    t_token    *tokens;
-}t_mdata;
+typedef struct s_mdata {
+	t_token		*tokens;
+	int			exit_status;
+} t_mdata;
+
+
+
+//------------- LEXER FUNCTIONS ----------
+int	ft_lexer(t_mdata *data, char *line);
+
+//--- Utils
+int		ft_isoperator(int c);
+int		ft_add_token(t_mdata *data, t_token *new_token);
+void	ft_token_free(t_mdata *data);
+
 
 
 #endif

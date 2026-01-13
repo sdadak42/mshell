@@ -12,87 +12,50 @@
 
 #include "minishell.h"
 
-void	ft_add_token(t_mdata *data, t_token *new_token)
+void	token_yaz_gecici(t_mdata *data)
 {
-	t_token	*temp;
+	t_token *temp;
 
-	if (!(data->tokens))
-		data->tokens = new_token;
-	else
+	temp = data->tokens;
+	if ((temp->value)[0] != '\0')
 	{
-		temp = data->tokens;
-		while (temp->next != NULL)
+		while (temp)
+		{
+			write(1, temp->value, ft_strlen(temp->value));
+			if (temp->is_join == 0)
+				write(1, " ", 1);
 			temp = temp->next;
-		temp->next = new_token;
-		new_token->next = NULL;
+		}
+		write(1, "\n", 1);
 	}
 }
-
-int	ft_token_word(t_mdata *data, char *line)
+void	ft_readline(t_mdata *data)
 {
-	t_token	*token;
-	int	i;
+	char		*line;
 
-	i = 0;
-	token = malloc(sizeof(t_token));
-	if (ft_isalpha(line[i]))
+	while(1)
 	{
-		while (ft_isalpha(line[i]))
-			i++;
-		token->value = ft_substr(line, 0, i);
-		token->type = WORD;
-		token->next = NULL;
-		ft_add_token(data, token);
-	}
-	return (i);
-}
-
-void	ft_lexer(t_mdata *data, char *line)
-{
-	int	i;
-
-	i = 0;
-	while (line[i])
-	{
-		if (ft_isalpha(line[i]))
-			i += ft_token_word(data, &line[i]);
-		i++;
+		line = readline("minishell$> ");
+		if (!line)			// ctrl-D basıldığında readline null döner
+		{
+			rl_clear_history();
+			exit(0);
+		}
+		if (*line && ft_lexer(data, line))		// Hata yoksa(tokenlar oluşmuşsa) lexer 1 döner.
+		{
+			add_history(line);
+			token_yaz_gecici(data);
+			// lexerdan sonra çalışması gereken ne varsa buraya gelmeli!
+		}
+		ft_token_free(data);
+		free(line);
 	}
 }
 
 int	main(void)
 {
-	t_mdata	*data;
-	t_token	*temp;
-	t_token	*freele;
-	char	*line;
+	t_mdata		*data;
 
-	data = malloc(sizeof(t_mdata));
-	while(1)
-	{
-		line = readline("minishell$> ");
-		if (!line)
-			return (rl_clear_history(), 0);
-		if (*line)
-		{
-			add_history(line);
-		}
-		ft_lexer(data, line);
-		temp = data->tokens;
-		while (temp)
-		{
-			write(1, temp->value, ft_strlen(temp->value));
-			write(1, "\n", 1);
-			temp = temp->next;
-		}
-		temp = data->tokens;
-		while (temp)
-		{
-			freele = temp;
-			temp = temp->next;
-			free(freele->value);
-			free(freele);
-		}
-		free(line);
-	}
+	data = ft_calloc(1, sizeof(t_mdata));
+	ft_readline(data);
 }
