@@ -19,7 +19,8 @@ static int	ft_token_word(t_mdata *data, char *line, int index)
 
 	i = index;
 	token = ft_calloc(1 ,sizeof(t_token));
-	while (!ft_isoperator(line[i]) && line[i] != ' ' && line[i] != '\'' && line[i] != '\"' && ft_isprint(line[i]))
+	while (!ft_isoperator(line[i]) && line[i] != ' ' && line[i] != '\''
+	&& line[i] != '\"' && ft_isprint(line[i]))
 		i++;
 	if (line[i] != ' ' && !ft_isoperator(line[i]) && line[i] != '\0')
 		token->is_join = 1;
@@ -48,7 +49,8 @@ static int	ft_token_quote(t_mdata *data, char *line, int index)
 		i++;
 	if (line[i] == '\0')
 		return (0);		// Kapanmamış tırnak hatası!
-	if (line[i + 1] != ' ' && !ft_isoperator(line[i + 1]) && line[i + 1] != '\0')
+	if (line[i + 1] != ' ' && !ft_isoperator(line[i + 1])
+	&& line[i + 1] != '\0')
 		token->is_join = 1;
 	token->value = ft_substr(line, index + 1, i - index - 1);
 	token->type = WORD;

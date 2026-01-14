@@ -52,10 +52,13 @@ void	ft_readline(t_mdata *data)
 	}
 }
 
-int	main(void)
+int	main(int argc, char **argv, char **envp)
 {
 	t_mdata		*data;
 
+	(void)argc;
+	(void)argv;
 	data = ft_calloc(1, sizeof(t_mdata));
+	ft_env_init(data, envp);
 	ft_readline(data);
 }
