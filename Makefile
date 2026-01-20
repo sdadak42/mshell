@@ -12,6 +12,9 @@ SRCS		= main.c \
 			  srcs/lexer/lexer_utils.c \
 			  srcs/env/env.c \
 			  srcs/env/env_utils.c \
+			  srcs/error/error.c \
+			  srcs/parser/parser.c \
+			  srcs/parser/expand.c \
 			  
 OBJS		= $(SRCS:.c=.o)
 

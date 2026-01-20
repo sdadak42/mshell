@@ -101,7 +101,7 @@ int	ft_lexer(t_mdata *data, char *line)
 			{
 				ft_putendl_fd("minishell: syntax error: unclosed quote",
 					STDERR);
-				return (data->exit_status = 2, 0);
+				return (data->exit_status = SYNTAX_EXIT_CODE, 0);
 			}
 			i += temp;
 		}

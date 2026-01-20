@@ -61,11 +61,16 @@ static void    ft_env_copy(t_mdata *data, char **envp)
 t_env   *ft_find_env(t_mdata *data, char *find_key)
 {
     t_env   *temp;
+    size_t  size;
     
     temp = data->env;
     while (temp)
     {
-        if (ft_strncmp(temp->key, find_key, ft_strlen(temp->key)) == 0)
+        if (ft_strlen(find_key) > ft_strlen(temp->key))
+            size = ft_strlen(find_key);
+        else
+            size = ft_strlen(temp->key);
+        if (ft_strncmp(temp->key, find_key, size) == 0)
             return (temp);
         temp = temp->next;
     }
@@ -99,11 +104,16 @@ char    **ft_env_to_arr(t_mdata *data)
 void    ft_env_init(t_mdata *data, char **envp)
 {
     t_env   *shlvl;
+    int     temp;
 
     ft_env_copy(data, envp);
     shlvl = ft_find_env(data, "SHLVL");
     if (!shlvl)
         ft_add_env(data, "SHLVL", ft_strdup("1"));
     else
-        shlvl->value = ft_itoa(ft_atoi(shlvl->value) + 1);
+    {
+        temp = ft_atoi(shlvl->value);
+        free(shlvl->value);
+        shlvl->value = ft_itoa(temp + 1);
+    }
 }

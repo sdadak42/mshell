@@ -17,7 +17,7 @@ void	token_yaz_gecici(t_mdata *data)
 	t_token *temp;
 
 	temp = data->tokens;
-	if ((temp->value)[0] != '\0')
+	if (temp /* && (temp->value)[0] != '\0' */)			//expand edilecek bişey yoksa ilk eleman \0 oluyor ve yazdırmıyor
 	{
 		while (temp)
 		{
@@ -39,16 +39,28 @@ void	ft_readline(t_mdata *data)
 		if (!line)			// ctrl-D basıldığında readline null döner
 		{
 			rl_clear_history();
+			ft_mdata_free(data);
 			exit(0);
 		}
-		if (*line && ft_lexer(data, line))		// Hata yoksa(tokenlar oluşmuşsa) lexer 1 döner.
+		data->line = line;
+		if (ft_lexer(data, line) == 0)			// tırnak kapatılamışsa lexer 0 döner!
+			add_history(line);
+		else if (data->tokens)
 		{
 			add_history(line);
-			token_yaz_gecici(data);
-			// lexerdan sonra çalışması gereken ne varsa buraya gelmeli!
+			// parser
+			if (ft_syntax_check(data))			// syntax hatası yoksa 1 döner
+			{
+				ft_expander(data);
+				token_yaz_gecici(data);
+			}
 		}
 		ft_token_free(data);
-		free(line);
+		if (data->line)
+		{
+			free(data->line);
+			data->line = NULL;
+		}
 	}
 }
 
