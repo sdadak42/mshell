@@ -22,13 +22,13 @@ void	token_yaz_gecici(t_mdata *data)
 		while (temp)
 		{
 			write(1, temp->value, ft_strlen(temp->value));
-			if (temp->is_join == 0)
-				write(1, " ", 1);
+			write(1, " ", 2);
 			temp = temp->next;
 		}
 		write(1, "\n", 1);
 	}
 }
+
 void	ft_readline(t_mdata *data)
 {
 	char		*line;
@@ -48,10 +48,11 @@ void	ft_readline(t_mdata *data)
 		else if (data->tokens)
 		{
 			add_history(line);
-			// parser
+		// bundan sonrası parser'a taşınmalı
 			if (ft_syntax_check(data))			// syntax hatası yoksa 1 döner
 			{
 				ft_expander(data);
+				ft_joiner(data);
 				token_yaz_gecici(data);
 			}
 		}
@@ -71,6 +72,8 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	data = ft_calloc(1, sizeof(t_mdata));
+	if (!data)
+		ft_error_malloc(data);
 	ft_env_init(data, envp);
 	ft_readline(data);
 }

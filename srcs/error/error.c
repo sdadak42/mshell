@@ -21,6 +21,8 @@ void    ft_error_malloc(t_mdata *data)
 
 void    ft_mdata_free(t_mdata *data)
 {
+    if (!data)
+        return ;
     ft_token_free(data);
     ft_env_free(data);
     if (data->line)
