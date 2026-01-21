@@ -77,11 +77,10 @@ void    ft_syntax_error(t_mdata *data, char *token_value);
 
 //--------------- PARSER FUNCTIONS -----------
 int    ft_syntax_check(t_mdata *data);
-
 void    ft_expander(t_mdata *data);
 
-
-
+//----- Utils
+char    *ft_joined(t_mdata *data, char *first, char *second);
 
 
 #endif

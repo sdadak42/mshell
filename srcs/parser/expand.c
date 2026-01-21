@@ -30,19 +30,69 @@ static char    *get_env_value(t_mdata *data, char *key)
     return (value);
 }
 
-char    *ft_joined(t_mdata *data, char *first, char *second)
+void    ft_exp_question(t_mdata *data, t_token *token, int i)
 {
-    char    *newstr;
+    char    *exp;
+    char    *piece;
+    char    *temp;
 
-    newstr = ft_strjoin(first, second);
-    free(first);
-    free(second);
-    if (!newstr)
+    exp = ft_itoa(data->exit_status);
+    if (!exp)
         ft_error_malloc(data);
-    return (newstr);
+    piece = ft_substr(token->value, 0, i);
+    if (!piece)
+        ft_error_malloc(data);
+    temp = ft_joined(data, piece, exp);
+    piece = ft_strdup(&token->value[i + 1 + 1]);
+    if (!piece)
+        ft_error_malloc(data);
+    free(token->value);
+    token->value = ft_joined(data, temp, piece);
 }
 
-static void    ft_word_expand(t_mdata *data, t_token *token)
+void    ft_exp_word(t_mdata *data, t_token *token, int i)
+{
+    int     j;
+    char    *exp;
+    char    *piece;
+    char    *temp;
+
+    j = 0;
+    while (token->value[i + 1 + j] && token->value[i + 1 + j] != ' '
+        && token->value[i + 1 + j] != '$')
+        j++;
+    exp = get_env_value(data, ft_substr(&token->value[i + 1], 0, j));
+    piece = ft_substr(token->value, 0, i);
+    if (!piece)
+        ft_error_malloc(data);
+    temp = ft_joined(data, piece, exp);
+    piece = ft_strdup(&token->value[i + j + 1]);
+    if (!piece)
+        ft_error_malloc(data);
+    free(token->value);
+    token->value = ft_joined(data, temp, piece);
+}
+/* static void    ft_word_expand(t_mdata *data, t_token *token)
+{
+    int     i;
+
+    i = 0;
+    while (token->value[i])
+    {
+        if (token->value[i] == '$' && (token->value[i + 1] == '_'
+            || ft_isalpha(token->value[i + 1]) || token->value[i + 1] == '?'))
+        {
+            if (token->value[i + 1] == '?')
+                ft_exp_question(data, token, i);
+            else
+                ft_exp_word(data, token, i);
+        }
+        i++;
+    }
+} */
+
+
+/* static void    ft_word_expand(t_mdata *data, t_token *token)
 {
     char    *piece;
     char    *temp;
@@ -83,9 +133,40 @@ static void    ft_word_expand(t_mdata *data, t_token *token)
         }
         i++;
     }
-}
+} */
+
 
 void    ft_expander(t_mdata *data)
+{
+    t_token *token;
+    int     i;
+
+    i = 0;
+    token = data->tokens;
+    while (token)
+    {
+        if (token->type == WORD && token->is_squote == 0)
+        {
+            while (token->value[i])
+            {
+                if (token->value[i] == '$' && (token->value[i + 1] == '_'
+                    || ft_isalpha(token->value[i + 1]) || token->value[i + 1] == '?'))
+                {
+                if (token->value[i + 1] == '?')
+                    ft_exp_question(data, token, i);
+                else
+                    ft_exp_word(data, token, i);
+                }
+                i++;
+            }
+        }
+        token = token->next;
+    }
+}
+
+
+
+/* void    ft_expander(t_mdata *data)
 {
     t_token *temp;
 
@@ -96,4 +177,4 @@ void    ft_expander(t_mdata *data)
             ft_word_expand(data, temp);
         temp = temp->next;
     }
-}
+} */
