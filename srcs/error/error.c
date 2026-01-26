@@ -21,6 +21,7 @@ void    ft_error_malloc(t_mdata *data)
 
 void    ft_mdata_free(t_mdata *data)
 {
+	rl_clear_history();
     if (!data)
         return ;
     ft_token_free(data);
@@ -28,6 +29,7 @@ void    ft_mdata_free(t_mdata *data)
     if (data->line)
         free(data->line);
     data->line = NULL;
+    ft_cmd_free(data->cmd);
     free(data);
     data = NULL;
 }

@@ -29,6 +29,38 @@ void	token_yaz_gecici(t_mdata *data)
 	}
 }
 
+void	cmd_yaz_gecici(t_mdata *data)
+{
+	t_cmd	*cmd;
+	t_redir	*redir;
+	int		i = 0;
+
+	cmd = data->cmd; 			//	FT_READLINE PARSER A ÇEKILECEK VE TEMİZLENECEK.	  TÜM MALLOC LARA İF EKLENECEK
+	while (cmd)					// SIGNAL LER ISLENECEK
+	{
+		write(1, "Sonraki cmd blok\n\n", ft_strlen("Sonraki cmd blok\n\n"));
+
+		i = 0;
+		while (cmd->argv && cmd->argv[i])
+		{
+			write(1, cmd->argv[i], ft_strlen(cmd->argv[i]));
+			write(1, " , ", 3);
+			i++;
+		}
+		write(1, "\n\nredir:\n", 9);
+		redir = cmd->redir;
+		while (redir)
+		{
+			write(1, ft_itoa(redir->type), 1);
+			write(1, " , ", 3);
+			write(1, redir->filename, ft_strlen(redir->filename));
+			write(1, "\n", 1);
+			redir = redir->next;
+		}
+		cmd = cmd->next;
+	}
+}
+
 void	ft_readline(t_mdata *data)
 {
 	char		*line;
@@ -38,7 +70,6 @@ void	ft_readline(t_mdata *data)
 		line = readline("minishell$> ");
 		if (!line)			// ctrl-D basıldığında readline null döner
 		{
-			rl_clear_history();
 			ft_mdata_free(data);
 			exit(0);
 		}
@@ -53,10 +84,15 @@ void	ft_readline(t_mdata *data)
 			{
 				ft_expander(data);
 				ft_joiner(data);
-				token_yaz_gecici(data);
+				ft_cmd_struct(data);
+				cmd_yaz_gecici(data);
+
+				//token_yaz_gecici(data);
 			}
 		}
 		ft_token_free(data);
+		ft_cmd_free(data->cmd);
+		data->cmd = NULL;
 		if (data->line)
 		{
 			free(data->line);

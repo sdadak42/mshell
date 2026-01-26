@@ -2,7 +2,6 @@
 # define MINISHELL_H
 
 # include "./Libft/libft.h"
-//# include "./ft_printf/ft_printf.h" // GECICI - ft_printf
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <stdio.h>
@@ -41,10 +40,24 @@ typedef struct s_env {
 	struct s_env	*next;
 } t_env;
 
+typedef struct s_redir {
+	t_type			type;
+	char			*filename;
+	int				heredoc_fd;
+	struct s_redir	*next;
+} t_redir;
+
+typedef struct s_cmd {
+	char			**argv;
+	t_redir			*redir;
+	struct s_cmd	*next;
+} t_cmd;
+
 typedef struct s_mdata {
 	t_token		*tokens;
 	t_env		*env;
 	char		*line;
+	t_cmd		*cmd;
 	int			exit_status;
 } t_mdata;
 
@@ -80,6 +93,12 @@ int    ft_syntax_check(t_mdata *data);
 void    ft_expander(t_mdata *data);
 void    ft_joiner(t_mdata *data);
 
+//--- CMD & UTILS
+void    ft_cmd_struct(t_mdata *data);
+void    ft_add_cmd(t_mdata *data, t_cmd *newcmd);
+void    ft_add_redir(t_cmd *cmd, t_redir *new_redir);
+void    ft_arr_free(char **arr);
+void    ft_cmd_free(t_cmd *cmd);
 
 //----- Utils
 char    *ft_joined(t_mdata *data, char *first, char *second);
