@@ -15,7 +15,7 @@
 static char *get_env_value(t_mdata *data, char *key)
 {
     char    *value;
-    t_env *env;
+    t_env   *env;
 
     if (!key)
         ft_error_malloc(data);
@@ -52,9 +52,9 @@ static void ft_exp_question(t_mdata *data, t_token *token, int i)
 
 static void ft_exp_word(t_mdata *data, t_token *token, int i)
 {
-    int   j;
+    int     j;
     char    *exp;
-    char  *piece;
+    char    *piece;
     char    *temp;
 
     j = 0;

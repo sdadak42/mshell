@@ -12,44 +12,41 @@
 
 #include "../../minishell.h"
 
-static int    ft_syntax_check_two(t_mdata *data, t_token *temp)
+void	ft_free_loop(t_mdata *data)
 {
-    if (ft_isoperator((int)(temp->value)[0]) && !temp->next)
-    {
-        ft_syntax_error(data, "newline");
-        return (0);
-    }
-    else if (temp->type == PIPE && temp->next->type == PIPE)
-    {
-        ft_syntax_error(data, temp->next->value);
-        return (0);
-    }
-    else if (temp->type == PIPE && ft_isoperator((int)(temp->next->value)[0]))
-        return (1);
-    else if (ft_isoperator((int)(temp->value)[0])
-    && ft_isoperator((int)(temp->next->value)[0]))
-    {
-        ft_syntax_error(data, temp->next->value);
-        return (0);
-    }
-    return (1);
+	ft_token_free(data);
+	ft_cmd_free(data->cmd);
+	data->cmd = NULL;
+	if (data->line)
+	{
+		free(data->line);
+		data->line = NULL;
+	}
 }
 
-int    ft_syntax_check(t_mdata *data)
+void	ft_readline(t_mdata *data)
 {
-    t_token *temp;
+	char	*line;
 
-    temp = data->tokens;
-    if (temp->type == PIPE)
-    {
-        ft_syntax_error(data, temp->value);
-        return (0);
-    }
-    while (temp)
-    {
-        if (ft_syntax_check_two(data, temp) == 0)
-            return (0);
-        temp = temp->next;
-    }
-    return (1);
+	line = readline("minishell$> ");
+	if (!line)			// ctrl-D basıldığında readline null döner
+	{
+		ft_mdata_free(data);
+		exit(0);
+	}
+	data->line = line;
+	if (ft_lexer(data, line) == 0)			// tırnak kapatılamışsa lexer 0 döner!
+		add_history(line);
+	else if (data->tokens)
+	{
+		add_history(line);
+		if (ft_syntax_check(data))			// syntax hatası yoksa 1 döner
+		{
+			ft_expander(data);
+			ft_joiner(data);
+			ft_cmd_struct(data);
+			cmd_yaz_gecici(data);
+			//token_yaz_gecici(data);
+		}
+	}
 }

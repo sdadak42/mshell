@@ -14,8 +14,8 @@ SRCS		= main.c \
 			  srcs/parser/parser_utils.c \
 			  srcs/parser/expand.c \
 			  srcs/parser/joiner.c \
-			  srcs/parser/cmd.c \
-			  srcs/parser/cmd_utils.c \
+			  srcs/cmd/cmd.c \
+			  srcs/cmd/cmd_utils.c \
 			  
 OBJS		= $(SRCS:.c=.o)
 

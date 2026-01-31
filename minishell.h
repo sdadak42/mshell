@@ -78,7 +78,7 @@ t_env   *ft_find_env(t_mdata *data, char *find_key);
 char    **ft_env_to_arr(t_mdata *data);
 
 //---- Utils
-int	ft_env_size(t_env *env);
+int		ft_env_size(t_env *env);
 void	ft_env_free(t_mdata *data);
 
 
@@ -89,19 +89,26 @@ void    ft_syntax_error(t_mdata *data, char *token_value);
 
 
 //--------------- PARSER FUNCTIONS -----------
-int    ft_syntax_check(t_mdata *data);
+void	ft_free_loop(t_mdata *data);
+void	ft_readline(t_mdata *data);
 void    ft_expander(t_mdata *data);
 void    ft_joiner(t_mdata *data);
 
-//--- CMD & UTILS
+//----- Utils
+char    *ft_joined(t_mdata *data, char *first, char *second);
+int		ft_syntax_check(t_mdata *data);
+
+
+//--------------- CMD & UTILS ----------------
 void    ft_cmd_struct(t_mdata *data);
 void    ft_add_cmd(t_mdata *data, t_cmd *newcmd);
 void    ft_add_redir(t_cmd *cmd, t_redir *new_redir);
 void    ft_arr_free(char **arr);
 void    ft_cmd_free(t_cmd *cmd);
 
-//----- Utils
-char    *ft_joined(t_mdata *data, char *first, char *second);
 
+// ------GECICI FONKSIYONLAR-----
+void	cmd_yaz_gecici(t_mdata *data);
+void	token_yaz_gecici(t_mdata *data);
 
 #endif

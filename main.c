@@ -35,7 +35,7 @@ void	cmd_yaz_gecici(t_mdata *data)
 	t_redir	*redir;
 	int		i = 0;
 
-	cmd = data->cmd; 			//	FT_READLINE PARSER A ÇEKILECEK VE TEMİZLENECEK.	  TÜM MALLOC LARA İF EKLENECEK
+	cmd = data->cmd;
 	while (cmd)					// SIGNAL LER ISLENECEK
 	{
 		write(1, "Sonraki cmd blok\n\n", ft_strlen("Sonraki cmd blok\n\n"));
@@ -61,43 +61,13 @@ void	cmd_yaz_gecici(t_mdata *data)
 	}
 }
 
-void	ft_readline(t_mdata *data)
+void	ft_loop(t_mdata *data)
 {
-	char		*line;
-
-	while(1)
+	while (1)
 	{
-		line = readline("minishell$> ");
-		if (!line)			// ctrl-D basıldığında readline null döner
-		{
-			ft_mdata_free(data);
-			exit(0);
-		}
-		data->line = line;
-		if (ft_lexer(data, line) == 0)			// tırnak kapatılamışsa lexer 0 döner!
-			add_history(line);
-		else if (data->tokens)
-		{
-			add_history(line);
-		// bundan sonrası parser'a taşınmalı
-			if (ft_syntax_check(data))			// syntax hatası yoksa 1 döner
-			{
-				ft_expander(data);
-				ft_joiner(data);
-				ft_cmd_struct(data);
-				cmd_yaz_gecici(data);
-
-				//token_yaz_gecici(data);
-			}
-		}
-		ft_token_free(data);
-		ft_cmd_free(data->cmd);
-		data->cmd = NULL;
-		if (data->line)
-		{
-			free(data->line);
-			data->line = NULL;
-		}
+		ft_readline(data);
+		//exec
+		ft_free_loop(data);
 	}
 }
 
@@ -111,5 +81,5 @@ int	main(int argc, char **argv, char **envp)
 	if (!data)
 		ft_error_malloc(data);
 	ft_env_init(data, envp);
-	ft_readline(data);
+	ft_loop(data);
 }
