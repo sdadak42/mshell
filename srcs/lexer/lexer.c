@@ -21,8 +21,8 @@ static int	ft_token_word(t_mdata *data, char *line, int index)
 	token = ft_calloc(1 ,sizeof(t_token));
 	if (!token)
 		ft_error_malloc(data);
-	while (!ft_isoperator(line[i]) && line[i] != ' ' && line[i] != '\''
-	&& line[i] != '\"' && ft_isprint(line[i]))
+	while (line[i] && !ft_isoperator(line[i]) && line[i] != ' ' && line[i] != '\''
+	&& line[i] != '\"' && line[i] != '\t' /* ft_isprint(line[i]) */)
 		i++;
 	if (line[i] != ' ' && !ft_isoperator(line[i]) && line[i] != '\0')
 		token->is_join = 1;
@@ -126,7 +126,7 @@ int	ft_lexer(t_mdata *data, char *line)
 		}
 		else if (ft_isoperator(line[i]))
 			i += ft_token_operator(data, line, i);
-		else if (line[i] != ' ' && ft_isprint(line[i]))
+		else if (line[i] != ' ' && line[i] != '\t' /* ft_isprint(line[i]) */)
 			i += ft_token_word(data, line, i);
 		else
 			i++;
